@@ -4,9 +4,9 @@ from dotenv import load_dotenv
 load_dotenv() # Load environment variables from .env file
 
 from app.utils import chunk_text, load_wikipedia
-from app.services.embeddings_service import get_query_embedding, get_openai_embeddings
+from app.services.embeddings_service import get_query_embedding, get_document_embedding
 from app.services.faiss_service import create_faiss_index, semantic_search
-from app.services.openai_service import ask_openai
+from app.services.prompt_service import ask_openai
 
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
@@ -19,15 +19,12 @@ def load_and_preprocess_data():
     paragraphs = chunk_text(text)
     return paragraphs
 
-
 def generate_embeddings(paragraphs):
     """
     Generate and normalize embeddings for paragraphs.
     """
-    print("Generating embeddings using OpenAI's text-embedding-ada-002...")
-    embeddings = get_openai_embeddings(paragraphs)
+    embeddings = get_document_embedding(paragraphs)
     return np.array([embedding / np.linalg.norm(embedding) for embedding in embeddings])
-
 
 def interactive_search_cli(index, paragraphs):
     """
