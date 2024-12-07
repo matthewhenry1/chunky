@@ -1,10 +1,18 @@
-def ask_openai(question, context, client):
+from openai import OpenAI
+import os
+
+# Initialize OpenAI client (handled within the module)
+OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
+client = OpenAI(api_key=OPENAI_API_KEY)
+
+def ask_openai(question, context):
     """
     Call OpenAI API with the question and semantic search results as context.
     """
     # Construct the prompt with context
     prompt = f"""
-    You are an expert assistant. Use the following context from The Great Gatsby to answer the user's question.
+    You are an expert assistant. Use the provided context to answer the user's question. 
+    If the context does not contain sufficient information, explain this clearly to the user.
 
     Context:
     {context}
@@ -12,14 +20,14 @@ def ask_openai(question, context, client):
     Question:
     {question}
 
-    Please provide a concise and clear response.
+    Please provide a concise and accurate response strictly based on the context above.
     """
 
     # Create a chat completion
     response = client.chat.completions.create(
         model="gpt-4",
         messages=[
-            {"role": "system", "content": "You are a helpful assistant knowledgeable about literature."},
+            {"role": "system", "content": "You are a helpful assistant that only answers based on the provided context."},
             {"role": "user", "content": prompt}
         ],
         temperature=0.7,

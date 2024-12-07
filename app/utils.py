@@ -5,7 +5,7 @@ import os
 
 def load_text(file_path):
     """
-    Load text content from a local file or a remote URL.
+    Load text content from a local file or a remote URL, e.g. https://www.gutenberg.org/cache/epub/64317/pg64317.txt
     """
     if file_path.startswith("http://") or file_path.startswith("https://"):
         # Fetch the text from the URL
@@ -20,13 +20,17 @@ def load_text(file_path):
 def chunk_text(text, chunk_size=1000):
     """
     Chunk text into meaningful paragraphs.
-    Handles paragraphs separated by blank lines and merges line breaks within paragraphs.
+    Handles paragraphs separated by blank lines, merges line breaks within paragraphs,
+    and converts all text to lowercase.
     """
     # Split the text into paragraphs based on blank lines
     paragraphs = re.split(r"\n\s*\n", text.strip())
 
     # Merge lines within a paragraph to create continuous text
     merged_paragraphs = [" ".join(p.splitlines()) for p in paragraphs]
+
+    # Convert paragraphs to lowercase
+    merged_paragraphs = [p.lower() for p in merged_paragraphs]
 
     # Further split large paragraphs into smaller chunks
     chunks = []
@@ -42,15 +46,20 @@ def chunk_text(text, chunk_size=1000):
 def load_wikipedia(topics=None):
     """
     Load text content from one or more Wikipedia articles.
+    If the Wikipedia output file exists, load from it. Otherwise, fetch fresh content.
     If no topics are provided, defaults to a predefined topic list.
     """
+    file_path = "data/wikipedia_output.txt"
+
+    # Check if the Wikipedia output file exists
+    if os.path.exists(file_path):
+        print(f"Loading content from {file_path}")
+        return load_text(file_path)
+
     # Set a user-friendly User-Agent as required by Wikipedia's API policy
     user_agent = "chunky/1.0 (https://github.com/matthewhenry1/chunky; matthewanthonyhenry@gmail.com)"
     wiki = wikipediaapi.Wikipedia(language='en', user_agent=user_agent)
-
-    if topics is None:
-        topics = ["Python (programming language)", "Artificial intelligence", "Machine learning"]
-
+    
     articles = []
     for topic in topics:
         page = wiki.page(topic)
@@ -65,7 +74,7 @@ def load_wikipedia(topics=None):
 
     # Ensure the directory exists
     os.makedirs("data", exist_ok=True)
-    with open("data/wikipedia_output.txt", "w", encoding="utf-8") as file:
+    with open(file_path, "w", encoding="utf-8") as file:
         file.write(result)
 
     return result

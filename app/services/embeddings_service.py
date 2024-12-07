@@ -2,11 +2,11 @@ import os
 import numpy as np
 from openai import OpenAI
 
-def preprocess_text(text):
-    """Normalize text for better matching."""
-    return text.lower()
+# Initialize OpenAI client within the module
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+client = OpenAI(api_key=OPENAI_API_KEY)
 
-def get_openai_embeddings(paragraphs, client, batch_size=10, cache_file='embeddings.npy'):
+def get_openai_embeddings(paragraphs, batch_size=10, cache_file='embeddings.npy'):
     """
     Generate embeddings using OpenAI's text-embedding-ada-002 model.
     Caches embeddings locally to avoid redundant API calls.
@@ -26,3 +26,16 @@ def get_openai_embeddings(paragraphs, client, batch_size=10, cache_file='embeddi
     embeddings = np.array(embeddings)
     np.save(cache_file, embeddings)
     return embeddings
+
+def get_query_embedding(query):
+    """
+    Generate embedding for a single query using OpenAI's text-embedding-ada-002 model.
+    """
+    response = client.embeddings.create(
+        model="text-embedding-ada-002",
+        input=query
+    )
+    if not response or not hasattr(response, 'data') or not response.data:
+        raise ValueError("Invalid response from embeddings API.")
+    
+    return np.array(response.data[0].embedding, dtype=np.float32).reshape(1, -1)

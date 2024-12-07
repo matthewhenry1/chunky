@@ -12,6 +12,12 @@
 
 ```python -m app```
 
+## Data
+
+Wikipedia topics are leveraged to pull text for RAG. Stored in `data/wikipedia_output.txt`, this can be manually edited for further testing. If the information is not present or clearly defined in the text it will not return in the semantic search for the LLM to answer the prompt.
+
+Manually edit the `data/wikipedia_output.txt` and be sure to delete the `embeddings.npy` to re-embed the data.
+
 ## Questions
 
 1. Knowledge Representation Questions:
