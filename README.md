@@ -1,5 +1,7 @@
 # Chunk, Embed, and Prompt CLI
 
+Pulls Wikipedia articles, embeds them locally using langchain or openai models, accepts a user query via the CLI, then using semantic search pulls relevant text from the user's query from the Wikipedia articles and then prompt's OpenAI to provide answers given the information provided from the semantic search.
+
 ## Activate venv
 
 ```python3 -m venv venv```
