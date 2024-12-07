@@ -5,8 +5,8 @@ from langchain_huggingface import HuggingFaceEmbeddings
 
 EMBEDDING_SERVICE = os.getenv("EMBEDDING_SERVICE", "openai")  # Options: 'openai', 'langchain'
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-OPENAI_MODEL = os.getenv("OPENAI_MODEL", "text-embedding-ada-002")
-LANGCHAIN_MODEL = os.getenv("LANGCHAIN_MODEL", "sentence-transformers/all-MiniLM-L6-v2")
+OPENAI_EMBEDDING_MODEL = os.getenv("OPENAI_EMBEDDING_MODEL", "text-embedding-ada-002")
+LANGCHAIN_EMBEDDING_MODEL = os.getenv("LANGCHAIN_EMBEDDING_MODEL", "sentence-transformers/all-MiniLM-L6-v2")
 
 # Core Embedding Methods
 def openai_generate_embeddings(input_text):
@@ -15,7 +15,7 @@ def openai_generate_embeddings(input_text):
     """
     client = OpenAI(api_key=OPENAI_API_KEY)
     response = client.embeddings.create(
-        model=OPENAI_MODEL,
+        model=OPENAI_EMBEDDING_MODEL,
         input=input_text
     )
     if not response or not hasattr(response, 'data') or not response.data:
@@ -26,7 +26,7 @@ def langchain_generate_embeddings(input_text, query=False):
     """
     Generate embeddings using LangChain's HuggingFaceEmbeddings model.
     """
-    langchain_embeddings = HuggingFaceEmbeddings(model_name=LANGCHAIN_MODEL)
+    langchain_embeddings = HuggingFaceEmbeddings(model_name=LANGCHAIN_EMBEDDING_MODEL)
     if query:
         return langchain_embeddings.embed_query(input_text)
     return langchain_embeddings.embed_documents(input_text)
@@ -36,7 +36,7 @@ def get_openai_document_embeddings(paragraphs, batch_size=10, cache_file='openai
     """
     Generate embeddings for paragraphs using OpenAI and handle file operations.
     """
-    print(f"Generating embeddings using OpenAI's {OPENAI_MODEL}...")
+    print(f"Generating embeddings using OpenAI's {OPENAI_EMBEDDING_MODEL}...")
     if os.path.exists(cache_file):
         print("Loading cached embeddings...")
         return np.load(cache_file)
@@ -53,7 +53,7 @@ def get_langchain_document_embeddings(paragraphs, cache_file='langchain_embeddin
     """
     Generate embeddings for paragraphs using LangChain and handle file operations.
     """
-    print(f"Generating embeddings using LangChain's {LANGCHAIN_MODEL}...")
+    print(f"Generating embeddings using LangChain's {LANGCHAIN_EMBEDDING_MODEL}...")
     if os.path.exists(cache_file):
         print("Loading cached embeddings...")
         return np.load(cache_file)

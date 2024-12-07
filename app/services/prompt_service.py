@@ -3,6 +3,8 @@ import os
 
 # Initialize OpenAI client (handled within the module)
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
+OPENAI_PROMPT_MODEL = os.getenv("OPENAI_PROMPT_MODEL", "gpt-4")
+
 client = OpenAI(api_key=OPENAI_API_KEY)
 
 def ask_openai(question, context):
@@ -25,7 +27,7 @@ def ask_openai(question, context):
 
     # Create a chat completion
     response = client.chat.completions.create(
-        model="gpt-4",
+        model=OPENAI_PROMPT_MODEL,
         messages=[
             {"role": "system", "content": "You are a helpful assistant that only answers based on the provided context."},
             {"role": "user", "content": prompt}

@@ -1,4 +1,4 @@
 .env
 venv
-embeddings.npy
+*.npy
 /data/

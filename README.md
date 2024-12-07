@@ -8,6 +8,12 @@
 
 ```pip install -r requirements.txt```
 
+## Convert example.env to .env
+
+`OPENAI_API_KEY`is required for the prompt api call to interpret the query and the result from the RAG
+
+`EMBEDDING_SERVICE` Options of `openai` or `langchain`. OpenAI of course will call OpenAI API's where LangChain will execute locally without that dependency.
+
 ## Run App
 
 ```python -m app```
